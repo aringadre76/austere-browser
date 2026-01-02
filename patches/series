@@ -1,0 +1,12 @@
+memory/001-aggressive-tab-discard.patch
+memory/002-process-limits.patch
+memory/003-v8-limits.patch
+memory/004-cache-preload.patch
+memory/005-infinite-tab-freezing.patch
+memory/006-memory-saving-by-default.patch
+memory/007-parallel-downloading.patch
+memory/008-max-connections-per-host.patch
+privacy/001-enhanced-privacy.patch
+core/009-strip-bloat.patch
+core/010-strip-ui.patch
+core/011-strip-services.patch

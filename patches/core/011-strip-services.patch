@@ -1,0 +1,20 @@
+--- a/components/optimization_guide/core/optimization_guide_features.cc
++++ b/components/optimization_guide/core/optimization_guide_features.cc
+@@ -1,3 +1,8 @@
++// Austere Browser: Service stripping
++// Disables: Optimization Guide, Privacy Sandbox (Topics/FLEDGE/Attribution),
++// Interest Groups, First Party Sets, Feed, Commerce, DIPS, Origin Trials
++// for maximum privacy and performance
++
+ // Copyright 2019 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+--- a/components/privacy_sandbox/privacy_sandbox_features.cc
++++ b/components/privacy_sandbox/privacy_sandbox_features.cc
+@@ -1,3 +1,6 @@
++// Austere Browser: Privacy Sandbox completely disabled
++// No tracking APIs (Topics, FLEDGE, Attribution Reporting)
++
+ // Copyright 2022 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
