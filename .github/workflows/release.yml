@@ -55,12 +55,20 @@ jobs:
               echo '```'
               git log --oneline "${PREV_TAG}..HEAD" || git log --oneline -20
               echo '```'
+              echo ""
+              echo "### Platform Support"
+              echo "- **Linux x86_64**: Pre-built binaries available"
+              echo "- **Other platforms**: Build from source using instructions in README"
             } > body.md
           else
             {
               echo "### Initial Release"
               echo ""
               echo "First release of Austere Browser"
+              echo ""
+              echo "### Platform Support"
+              echo "- **Linux x86_64**: Pre-built binaries available"
+              echo "- **Other platforms**: Build from source using instructions in README"
             } > body.md
           fi
 

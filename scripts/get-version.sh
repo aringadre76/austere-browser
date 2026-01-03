@@ -34,4 +34,3 @@ if [ "${1:-}" = "--full" ]; then
 else
     echo "${VERSION}"
 fi
-

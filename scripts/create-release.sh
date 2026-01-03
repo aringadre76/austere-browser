@@ -42,18 +42,20 @@ cd "${PROJECT_ROOT}"
 
 print_status "Creating release archive..."
 cd "${PROJECT_ROOT}/package"
-ARCHIVE_NAME="austere-browser-${VERSION}-linux-x64.tar.gz"
+PLATFORM="linux-x86_64"
+ARCHIVE_NAME="austere-browser-${VERSION}-${PLATFORM}.tar.gz"
 tar -czf "../${ARCHIVE_NAME}" austere-browser-*
 cd "${PROJECT_ROOT}"
 
 print_status "Creating checksum..."
-sha256sum "${ARCHIVE_NAME}" > "${ARCHIVE_NAME%.tar.gz}.sha256"
+CHECKSUM_NAME="austere-browser-${VERSION}-${PLATFORM}.sha256"
+sha256sum "${ARCHIVE_NAME}" > "${CHECKSUM_NAME}"
 
 print_status "Release files created:"
-ls -lh "${ARCHIVE_NAME}" "${ARCHIVE_NAME%.tar.gz}.sha256"
+ls -lh "${ARCHIVE_NAME}" "${CHECKSUM_NAME}"
 
 print_status ""
 print_status "To create a GitHub release:"
 print_status "1. Create a tag: git tag -a ${TAG_NAME} -m 'Release ${VERSION}'"
 print_status "2. Push the tag: git push origin ${TAG_NAME}"
-print_status "3. Or use GitHub CLI: gh release create ${TAG_NAME} ${ARCHIVE_NAME} ${ARCHIVE_NAME%.tar.gz}.sha256 --title 'Austere Browser ${VERSION}'"
+print_status "3. Or use GitHub CLI: gh release create ${TAG_NAME} ${ARCHIVE_NAME} ${CHECKSUM_NAME} --title 'Austere Browser ${VERSION}' --notes 'Release ${VERSION} for Linux x86_64'"
