@@ -1,0 +1,100 @@
+name: Build (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        type: choice
+        options:
+          - full
+          - build
+        default: 'full'
+
+jobs:
+  build-linux:
+    name: Build browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Check disk space
+        run: |
+          df -h
+          echo "WARNING: Chromium builds require 50GB+ disk space"
+          echo "GitHub Actions runners have limited space (~14GB free)"
+          echo "This build may fail due to insufficient disk space"
+          echo ""
+          echo "Consider building locally and uploading the package manually"
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git python3 python3-setuptools curl tar xz-utils \
+            ninja-build clang lld llvm libcups2-dev libpulse-dev libasound2-dev \
+            libpci-dev libudev-dev libdrm-dev libgbm-dev libxkbcommon-dev \
+            libwayland-dev libgtk-3-dev libdbus-1-dev libffi-dev \
+            libglib2.0-dev libnss3-dev libnspr4-dev \
+            gperf
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          components: rust-src
+          override: true
+
+      - name: Install bindgen
+        run: |
+          cargo install bindgen-cli
+
+      - name: Setup build environment
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          mkdir -p ~/.cargo/bin
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Fetch Chromium source
+        if: github.event.inputs.build_type == 'full'
+        run: |
+          df -h
+          ./build/fetch.sh
+          df -h
+
+      - name: Apply patches
+        run: |
+          ./build/apply_patches.sh
+
+      - name: Build browser
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          df -h
+          JOBS=2
+          ./build/build.sh ${{ github.event.inputs.build_type }}
+          df -h
+
+      - name: Run tests
+        run: |
+          ./scripts/test.sh
+
+      - name: Create package
+        run: |
+          ./scripts/package.sh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: austere-browser-build
+          path: |
+            package/
+            output/
+          retention-days: 7
+

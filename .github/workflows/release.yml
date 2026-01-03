@@ -1,4 +1,7 @@
-name: Build and Release
+name: Create Release
+
+permissions:
+  contents: write
 
 on:
   push:
@@ -10,110 +13,20 @@ on:
         description: 'Version number (e.g., 1.0.0)'
         required: true
         type: string
-
-env:
-  AUSTERE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+      upload_file:
+        description: 'Path to pre-built package (optional)'
+        required: false
+        type: string
 
 jobs:
-  build-linux:
+  create-release:
+    name: Create release
     runs-on: ubuntu-latest
-    timeout-minutes: 480
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive
-
-      - name: Check disk space
-        run: |
-          df -h
-          echo "Available disk space before build:"
-          df -h / | tail -1
-
-      - name: Clean up disk space
-        run: |
-          sudo apt-get clean
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /usr/local/share/boost
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          docker system prune -af || true
-          df -h
-
-      - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            git python3 python3-setuptools curl tar xz-utils \
-            ninja-build clang lld llvm libcups2-dev libpulse-dev libasound2-dev \
-            libpci-dev libudev-dev libdrm-dev libgbm-dev libxkbcommon-dev \
-            libwayland-dev libgtk-3-dev libdbus-1-dev libffi-dev \
-            libglib2.0-dev libnss3-dev libnspr4-dev \
-            gperf
-
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          default: true
-          components: rust-src
-          override: true
-
-      - name: Install bindgen
-        run: |
-          cargo install bindgen-cli
-
-      - name: Setup build environment
-        run: |
-          export PATH="$HOME/.cargo/bin:$PATH"
-          mkdir -p ~/.cargo/bin
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Fetch Chromium source
-        run: |
-          df -h
-          ./build/fetch.sh
-          df -h
-          echo "Disk space after fetch:"
-          du -sh build_src/ || true
-
-      - name: Apply patches
-        run: |
-          ./build/apply_patches.sh
-
-      - name: Build browser
-        run: |
-          export PATH="$HOME/.cargo/bin:$PATH"
-          df -h
-          echo "Disk space before build:"
-          du -sh build_src/ || true
-          JOBS=2
-          ./build/build.sh build
-          df -h
-          echo "Disk space after build:"
-          du -sh build_src/ || true
-        env:
-          JOBS: 2
-
-      - name: Clean up build artifacts
-        run: |
-          echo "Cleaning up unnecessary build files to save space..."
-          find build_src/src/out -name "*.o" -delete 2>/dev/null || true
-          find build_src/src/out -name "*.d" -delete 2>/dev/null || true
-          find build_src/src/out -name "*.rsp" -delete 2>/dev/null || true
-          find build_src/src/out -name "*.a" -delete 2>/dev/null || true
-          find build_src/src/out -type d -name "obj" -exec rm -rf {} + 2>/dev/null || true
-          df -h
-
-      - name: Run tests
-        run: |
-          ./scripts/test.sh
-
-      - name: Create package
-        run: |
-          ./scripts/package.sh
-          df -h
+          fetch-depth: 0
 
       - name: Get version
         id: get_version
@@ -126,53 +39,46 @@ jobs:
             VERSION="1.0.0"
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
           echo "Version: $VERSION"
 
-      - name: Create release archive
-        run: |
-          VERSION="${{ steps.get_version.outputs.version }}"
-          cd package
-          tar -czf "../austere-browser-${VERSION}-linux-x64.tar.gz" austere-browser-*
-          cd ..
-          ls -lh austere-browser-*.tar.gz
-
-      - name: Create checksums
-        run: |
-          sha256sum austere-browser-*.tar.gz > austere-browser-${{ steps.get_version.outputs.version }}-linux-x64.sha256
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: austere-browser-linux-x64
-          path: |
-            austere-browser-*.tar.gz
-            austere-browser-*.sha256
-          retention-days: 30
-
-      - name: Create GitHub Release
+      - name: Generate changelog
+        id: changelog
         if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -n "$PREV_TAG" ]; then
+            {
+              echo "### Changelog"
+              echo '```'
+              git log --oneline "${PREV_TAG}..HEAD" || git log --oneline -20
+              echo '```'
+            } > body.md
+          else
+            {
+              echo "### Initial Release"
+              echo ""
+              echo "First release of Austere Browser"
+            } > body.md
+          fi
+
+      - name: Create Release
+        id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            austere-browser-*.tar.gz
-            austere-browser-*.sha256
+          tag_name: ${{ steps.get_version.outputs.tag }}
+          name: Austere Browser ${{ steps.get_version.outputs.version }}
+          body_path: body.md
           draft: false
           prerelease: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create manual release
-        if: github.event_name == 'workflow_dispatch'
+      - name: Upload pre-built package
+        if: github.event.inputs.upload_file != ''
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
-          name: Austere Browser ${{ steps.get_version.outputs.version }}
-          files: |
-            austere-browser-*.tar.gz
-            austere-browser-*.sha256
-          draft: false
-          prerelease: false
-          generate_release_notes: true
+          files: ${{ github.event.inputs.upload_file }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
