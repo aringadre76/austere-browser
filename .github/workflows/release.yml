@@ -1,0 +1,142 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.0)'
+        required: true
+        type: string
+
+env:
+  AUSTERE_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 480
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git python3 python3-setuptools curl tar xz-utils \
+            ninja-build clang lld llvm libcups2-dev libpulse-dev libasound2-dev \
+            libpci-dev libudev-dev libdrm-dev libgbm-dev libxkbcommon-dev \
+            libwayland-dev libgtk-3-dev libdbus-1-dev libffi-dev \
+            libglib2.0-dev libnss3-dev libnspr4-dev \
+            gperf
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          components: rust-src
+          override: true
+
+      - name: Install bindgen
+        run: |
+          cargo install bindgen-cli
+
+      - name: Setup build environment
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          mkdir -p ~/.cargo/bin
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Fetch Chromium source
+        run: |
+          ./build/fetch.sh
+
+      - name: Apply patches
+        run: |
+          ./build/apply_patches.sh
+
+      - name: Build browser
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          JOBS=$(nproc)
+          ./build/build.sh build
+        env:
+          JOBS: ${{ github.event.repository.private && '2' || '4' }}
+
+      - name: Run tests
+        run: |
+          ./scripts/test.sh
+
+      - name: Create package
+        run: |
+          ./scripts/package.sh
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="1.0.0"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Create release archive
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          cd package
+          tar -czf "../austere-browser-${VERSION}-linux-x64.tar.gz" austere-browser-*
+          cd ..
+          ls -lh austere-browser-*.tar.gz
+
+      - name: Create checksums
+        run: |
+          sha256sum austere-browser-*.tar.gz > austere-browser-${{ steps.get_version.outputs.version }}-linux-x64.sha256
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: austere-browser-linux-x64
+          path: |
+            austere-browser-*.tar.gz
+            austere-browser-*.sha256
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            austere-browser-*.tar.gz
+            austere-browser-*.sha256
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create manual release
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: Austere Browser ${{ steps.get_version.outputs.version }}
+          files: |
+            austere-browser-*.tar.gz
+            austere-browser-*.sha256
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

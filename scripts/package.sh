@@ -8,7 +8,7 @@ PACKAGE_DIR="${PROJECT_ROOT}/package"
 BUILD_DIR="${PROJECT_ROOT}/build_src"
 
 VERSION=$(cat "${BUILD_DIR}/chromium_version.txt" 2>/dev/null || echo "0.0.0")
-AUSTERE_VERSION="1.0.0"
+AUSTERE_VERSION="${AUSTERE_VERSION:-1.0.0}"
 PACKAGE_NAME="austere-browser-${AUSTERE_VERSION}-linux-x64"
 
 print_status() {

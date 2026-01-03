@@ -151,6 +151,28 @@ JOBS=4 ./build/build.sh build  # Control parallel jobs
 
 ## Installation
 
+### Pre-built Releases (Recommended)
+
+Download the latest release from [GitHub Releases](https://github.com/aringadre76/austere-browser/releases):
+
+```bash
+# Download and extract
+wget https://github.com/aringadre76/austere-browser/releases/latest/download/austere-browser-*-linux-x64.tar.gz
+tar -xzf austere-browser-*-linux-x64.tar.gz
+cd austere-browser-*-linux-x64
+
+# Install
+sudo ./install.sh
+```
+
+Or install to your home directory:
+
+```bash
+./install.sh ~/.local
+```
+
+### Building from Source
+
 After building, install the browser:
 
 ```bash

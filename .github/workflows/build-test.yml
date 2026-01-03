@@ -1,0 +1,65 @@
+name: Build Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git python3 python3-setuptools curl tar xz-utils \
+            ninja-build clang lld llvm libcups2-dev libpulse-dev libasound2-dev \
+            libpci-dev libudev-dev libdrm-dev libgbm-dev libxkbcommon-dev \
+            libwayland-dev libgtk-3-dev libdbus-1-dev libffi-dev \
+            libglib2.0-dev libnss3-dev libnspr4-dev \
+            gperf
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          default: true
+          components: rust-src
+          override: true
+
+      - name: Install bindgen
+        run: |
+          cargo install bindgen-cli
+
+      - name: Setup build environment
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          mkdir -p ~/.cargo/bin
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Validate patches
+        run: |
+          if [ -d "build_src/src" ]; then
+            echo "Source already exists, testing patch application..."
+            ./build/apply_patches.sh
+          else
+            echo "Source not present, skipping patch test"
+          fi
+
+      - name: Run test script
+        run: |
+          if [ -d "output" ] && [ -f "output/austere-browser" ]; then
+            ./scripts/test.sh
+          else
+            echo "Browser not built, skipping tests"
+          fi
+
