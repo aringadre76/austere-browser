@@ -6,6 +6,7 @@ memory/005-infinite-tab-freezing.patch
 memory/006-memory-saving-by-default.patch
 memory/007-parallel-downloading.patch
 memory/008-max-connections-per-host.patch
+memory/014-memory-aggressiveness-enum.patch
 privacy/001-enhanced-privacy.patch
 core/009-strip-bloat.patch
 core/010-strip-ui.patch

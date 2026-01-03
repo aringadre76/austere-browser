@@ -64,13 +64,20 @@ The following components are completely removed at build time:
 
 ### Memory Optimization
 
-- Aggressive tab discarding (30-second threshold)
+- **Customizable Memory Management Levels** (user-configurable in settings):
+  - **Super Aggressive** (default): 15-second tab discard threshold - Maximum memory savings
+  - **Aggressive**: 30-second threshold - High memory savings
+  - **Medium**: 45-second threshold - Moderate memory savings
+  - **Light**: 2-hour threshold - Minimal memory savings
+  - **None**: Disabled - No automatic memory management
 - Infinite tab freezing (frozen tabs stay frozen)
-- Memory Saver Mode enabled by default
+- Memory Saver Mode enabled by default (Super Aggressive)
 - Reduced renderer process limit (8 vs 42)
 - V8 heap limits (128MB vs 2GB)
 - Disk cache limited to 50MB
 - All preloading disabled
+
+**To change memory management level**: Go to `chrome://settings/performance` or use the Performance settings in the browser menu.
 
 ### Performance Enhancements
 

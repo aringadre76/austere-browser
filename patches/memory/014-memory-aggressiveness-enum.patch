@@ -1,0 +1,20 @@
+--- a/components/performance_manager/user_tuning/prefs.h
++++ b/components/performance_manager/user_tuning/prefs.h
+@@ -1,3 +1,4 @@
++// Austere Browser: Extended memory aggressiveness levels
+ // Copyright 2022 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -30,6 +31,12 @@ enum class MemorySaverModeAggressiveness {
+   kConservative = 0,  // Light mode
+   kMedium = 1,
+   kAggressive = 2,
++  // Austere Browser: Additional levels for user customization
++  kNone = 3,           // No memory savings (disabled)
++  kSuperAggressive = 4, // Maximum memory savings (15 seconds)
++  // Note: Users can select these levels in browser settings
++  // Default: kSuperAggressive for maximum memory efficiency
+ };
+ 
+ }  // namespace user_tuning::prefs
+

@@ -1,26 +1,41 @@
 --- a/chrome/browser/performance_manager/policies/memory_saver_mode_policy.cc
 +++ b/chrome/browser/performance_manager/policies/memory_saver_mode_policy.cc
 @@ -1,3 +1,5 @@
-+// Austere Browser: Aggressive tab discard times
-+// Reduced from hours to seconds for maximum memory savings
++// Austere Browser: Customizable memory management levels
++// Supports: None (disabled), Light, Medium, Aggressive, Super Aggressive
  // Copyright 2022 The Chromium Authors
  // Use of this source code is governed by a BSD-style license that can be
  // found in the LICENSE file.
-@@ -203,11 +205,14 @@ void MemorySaverModePolicy::DiscardPageTimerCallback(
+@@ -203,11 +205,28 @@ void MemorySaverModePolicy::DiscardPageTimerCallback(
  base::TimeDelta MemorySaverModePolicy::GetTimeBeforeDiscardForCurrentMode()
      const {
    switch (mode_) {
++    // Austere Browser: Customizable memory management levels
++    // None: Disabled (handled by MemorySaverModeState)
++    // Light (Conservative): 2 hours
++    // Medium: 45 seconds
++    // Aggressive: 30 seconds
++    // Super Aggressive: 15 seconds (maximum savings)
      case MemorySaverModeAggressiveness::kConservative:
 -      return base::Hours(6);
-+      // Austere: 60 seconds instead of 6 hours
-+      return base::Seconds(60);
++      // Light mode: 2 hours
++      return base::Hours(2);
      case MemorySaverModeAggressiveness::kMedium:
 -      return base::Hours(4);
-+      // Austere: 45 seconds instead of 4 hours
++      // Medium mode: 45 seconds
 +      return base::Seconds(45);
      case MemorySaverModeAggressiveness::kAggressive:
 -      return base::Hours(2);
-+      // Austere: 30 seconds instead of 2 hours
++      // Aggressive mode: 30 seconds
++      return base::Seconds(30);
++    case MemorySaverModeAggressiveness::kSuperAggressive:
++      // Super Aggressive mode: 15 seconds (maximum memory savings)
++      return base::Seconds(15);
++    case MemorySaverModeAggressiveness::kNone:
++      // No memory savings - return max time (effectively disabled)
++      return base::TimeDelta::Max();
++    default:
++      // Default to aggressive
 +      return base::Seconds(30);
    }
    NOTREACHED();
