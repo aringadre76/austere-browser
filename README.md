@@ -89,6 +89,12 @@ The following components are completely removed at build time:
 - No sync/signin possible
 - DuckDuckGo as default search
 
+### UI Enhancements
+
+- Tab memory usage tooltips (hover over tabs to see memory usage)
+- Memory savings display for frozen/discarded tabs
+- High memory usage indicators
+
 ## System Requirements
 
 ### Build Requirements
@@ -143,6 +149,22 @@ sudo pacman -S git python python-setuptools curl tar xz ninja clang lld llvm \
 JOBS=4 ./build/build.sh build  # Control parallel jobs
 ```
 
+## Installation
+
+After building, install the browser:
+
+```bash
+./build/install.sh
+```
+
+This will install to `~/.local/` by default. For system-wide installation:
+
+```bash
+sudo INSTALL_PREFIX=/usr/local ./build/install.sh
+```
+
+The browser will be available as `austere-browser` in your PATH and in your application menu.
+
 ## Project Structure
 
 ```
@@ -150,6 +172,7 @@ austere-browser/
 ├── flags.gn                  # GN build flags (stripped components)
 ├── build/
 │   ├── build.sh              # Main build orchestrator
+│   ├── install.sh            # Installation script
 │   ├── fetch.sh              # Fetch source code
 │   ├── apply_patches.sh      # Apply patches using series file
 │   └── config/
@@ -171,6 +194,8 @@ austere-browser/
 │   │   └── 011-strip-services.patch
 │   ├── privacy/              # Privacy patches
 │   │   └── 001-enhanced-privacy.patch
+│   ├── ui/                   # UI enhancement patches
+│   │   └── 001-tab-memory-tooltip.patch
 │   └── branding/             # Optional branding
 ├── configs/
 │   ├── austere_flags.txt     # Runtime flags (80+ flags)
@@ -206,6 +231,7 @@ Despite aggressive stripping, the following still work:
 - Bookmarks (local only)
 - History (local only)
 - Cookies (first-party only by default)
+- Tab memory usage monitoring (hover over tabs to see memory)
 
 ## What Does NOT Work
 
