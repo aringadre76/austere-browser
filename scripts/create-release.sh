@@ -13,13 +13,20 @@ print_error() {
 }
 
 if [ $# -lt 1 ]; then
+    CURRENT_VERSION=$(./scripts/get-version.sh)
     print_error "Usage: $0 <version> [tag_name]"
     print_error "Example: $0 1.0.0 v1.0.0"
+    print_error "Current version: ${CURRENT_VERSION}"
     exit 1
 fi
 
 VERSION="$1"
 TAG_NAME="${2:-v${VERSION}}"
+
+if [ -z "$VERSION" ]; then
+    VERSION=$(./scripts/get-version.sh)
+    print_status "No version specified, using current version: ${VERSION}"
+fi
 
 print_status "Creating release for version ${VERSION} (tag: ${TAG_NAME})"
 
@@ -50,4 +57,3 @@ print_status "To create a GitHub release:"
 print_status "1. Create a tag: git tag -a ${TAG_NAME} -m 'Release ${VERSION}'"
 print_status "2. Push the tag: git push origin ${TAG_NAME}"
 print_status "3. Or use GitHub CLI: gh release create ${TAG_NAME} ${ARCHIVE_NAME} ${ARCHIVE_NAME%.tar.gz}.sha256 --title 'Austere Browser ${VERSION}'"
-
