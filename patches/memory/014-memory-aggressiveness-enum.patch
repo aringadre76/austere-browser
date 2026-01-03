@@ -15,6 +15,5 @@
 +  // Note: Users can select these levels in browser settings
 +  // Default: kSuperAggressive for maximum memory efficiency
  };
- 
- }  // namespace user_tuning::prefs
 
+ }  // namespace user_tuning::prefs

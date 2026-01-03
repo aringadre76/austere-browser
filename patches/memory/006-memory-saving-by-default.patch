@@ -7,7 +7,7 @@
  // Use of this source code is governed by a BSD-style license that can be
  // found in the LICENSE file.
 @@ -20,13 +22,18 @@ namespace performance_manager::user_tuning::prefs {
- 
+
  void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
 -  registry->RegisterBooleanPref(kMemorySaverModeEnabled, false);
 +  // Austere: Enable memory saver by default, but allow user customization

@@ -12,3 +12,4 @@ core/009-strip-bloat.patch
 core/010-strip-ui.patch
 core/011-strip-services.patch
 ui/001-tab-memory-tooltip.patch
+ui/002-memory-settings-ui.patch
