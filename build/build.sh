@@ -39,7 +39,7 @@ check_build_deps() {
 setup_environment() {
     print_status "Setting up build environment..."
 
-    export PATH="${HOME}/.cargo/bin:${BUILD_DIR}/depot_tools:$PATH"
+    export PATH="${HOME}/.cargo/bin:${BUILD_DIR}/depot_tools:/usr/bin:$PATH"
 
     export CC=clang
     export CXX=clang++
@@ -93,6 +93,8 @@ create_output() {
     cp "${OUT_DIR}/chrome_crashpad_handler" "${output_dir}/" 2>/dev/null || true
     cp "${OUT_DIR}/"*.pak "${output_dir}/"
     cp "${OUT_DIR}/"*.bin "${output_dir}/" 2>/dev/null || true
+    cp "${OUT_DIR}/icudtl.dat" "${output_dir}/" 2>/dev/null || true
+    cp "${OUT_DIR}/"lib*.so "${output_dir}/" 2>/dev/null || true
     cp -r "${OUT_DIR}/locales" "${output_dir}/"
     cp -r "${OUT_DIR}/resources" "${output_dir}/" 2>/dev/null || true
 

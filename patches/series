@@ -10,3 +10,4 @@ privacy/001-enhanced-privacy.patch
 core/009-strip-bloat.patch
 core/010-strip-ui.patch
 core/011-strip-services.patch
+ui/001-tab-memory-tooltip.patch
