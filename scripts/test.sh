@@ -25,10 +25,10 @@ fail_count=0
 run_test() {
     local test_name="$1"
     local test_command="$2"
-    
+
     test_count=$((test_count + 1))
     print_status "Test $test_count: $test_name"
-    
+
     if eval "$test_command"; then
         print_success "$test_name"
         pass_count=$((pass_count + 1))
@@ -94,4 +94,3 @@ else
     print_error "Some tests failed"
     exit 1
 fi
-

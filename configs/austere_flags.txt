@@ -13,7 +13,7 @@
 --disable-ipc-flooding-protection
 --disable-popup-blocking
 --disable-prompt-on-repost
---disable-renderer-backgrounding
+--enable-renderer-backgrounding
 --disable-sync
 --disable-translate
 --enable-aggressive-domstorage-flushing
