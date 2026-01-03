@@ -162,19 +162,36 @@ JOBS=4 ./build/build.sh build  # Control parallel jobs
 
 Download the latest release from [GitHub Releases](https://github.com/aringadre76/austere-browser/releases):
 
-```bash
-# Download and extract
-wget https://github.com/aringadre76/austere-browser/releases/latest/download/austere-browser-*-linux-x64.tar.gz
-tar -xzf austere-browser-*-linux-x64.tar.gz
-cd austere-browser-*-linux-x64
+#### Option 1: AppImage (Recommended - No Installation Required)
 
-# Install
-sudo ./install.sh
+```bash
+# Download AppImage
+wget https://github.com/aringadre76/austere-browser/releases/latest/download/austere-browser-*-x86_64.AppImage
+
+# Make executable
+chmod +x austere-browser-*-x86_64.AppImage
+
+# Run directly
+./austere-browser-*-x86_64.AppImage
 ```
 
-Or install to your home directory:
+**Note:** AppImage requires `libfuse2`. Install with:
+- Ubuntu/Debian: `sudo apt-get install libfuse2`
+- Fedora: `sudo dnf install fuse-libs`
+- Arch: `sudo pacman -S fuse2`
+
+#### Option 2: Tarball (Traditional Installation)
 
 ```bash
+# Download and extract
+wget https://github.com/aringadre76/austere-browser/releases/latest/download/austere-browser-*-linux-x86_64.tar.gz
+tar -xzf austere-browser-*-linux-x86_64.tar.gz
+cd austere-browser-*-linux-x86_64
+
+# Install system-wide
+sudo ./install.sh
+
+# Or install to home directory
 ./install.sh ~/.local
 ```
 
