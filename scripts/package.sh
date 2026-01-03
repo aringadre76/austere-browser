@@ -199,6 +199,7 @@ show_package_info() {
     print_status "Package Information"
     print_status "==================="
     echo "Name: ${PACKAGE_NAME}"
+    echo "Platform: ${PLATFORM}"
     echo "Chromium version: ${VERSION}"
     echo "Austere version: ${AUSTERE_VERSION}"
     echo "Package location: ${PACKAGE_DIR}/${PACKAGE_NAME}.tar.xz"
@@ -207,6 +208,9 @@ show_package_info() {
     echo "  tar xf ${PACKAGE_NAME}.tar.xz"
     echo "  cd ${PACKAGE_NAME}"
     echo "  sudo ./install.sh"
+    echo ""
+    echo "For GitHub Releases, rename to:"
+    echo "  austere-browser-${AUSTERE_VERSION}-${PLATFORM}.tar.gz"
 }
 
 main() {
