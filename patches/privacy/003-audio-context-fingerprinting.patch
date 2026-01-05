@@ -1,0 +1,83 @@
+--- a/third_party/blink/public/common/features.h
++++ b/third_party/blink/public/common/features.h
+@@ -23,6 +23,7 @@ namespace blink {
+ namespace features {
+
+ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kAudioContextJitter);
++BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kFingerprintingAudioContextJitter);
+
+ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kDisableLinkDrag);
+ BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kReducedSystemInfo);
+--- a/third_party/blink/common/features.cc
++++ b/third_party/blink/common/features.cc
+@@ -24,6 +24,10 @@ BASE_FEATURE(kAudioContextJitter,
+              "AudioContextJitter",
+              base::FEATURE_ENABLED_BY_DEFAULT);
+
++BASE_FEATURE(kFingerprintingAudioContextJitter,
++             "FingerprintingAudioContextJitter",
++             base::FEATURE_ENABLED_BY_DEFAULT);
++
+ BASE_FEATURE(kDisableLinkDrag, "DisableLinkDrag", base::FEATURE_DISABLED_BY_DEFAULT);
+ BASE_FEATURE(kReducedSystemInfo, "ReducedSystemInfo", base::FEATURE_DISABLED_BY_DEFAULT);
+ BASE_FEATURE(kRemoveClientHints, "RemoveClientHints", base::FEATURE_DISABLED_BY_DEFAULT);
+--- a/third_party/blink/renderer/modules/webaudio/audio_context.cc
++++ b/third_party/blink/renderer/modules/webaudio/audio_context.cc
+@@ -1,3 +1,4 @@
++// Austere Browser: Audio context fingerprinting mitigation
+ // Copyright 2015 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -40,6 +41,7 @@
+ #include "third_party/blink/renderer/platform/audio/audio_utilities.h"
+ #include "third_party/blink/renderer/platform/bindings/exception_state.h"
+ #include "third_party/blink/renderer/platform/instrumentation/use_counter.h"
++#include "third_party/blink/renderer/platform/runtime_enabled_features.h"
+ #include "third_party/blink/renderer/platform/wtf/cross_thread_functional.h"
+ #include "third_party/blink/renderer/platform/wtf/text/string_builder.h"
+
+@@ -200,6 +202,12 @@ AudioContext::AudioContext(Document* document,
+   destination_node_ = MakeGarbageCollected<AudioDestinationNode>(this, destination_handler);
+   SetHandler(destination_handler);
+
++  if (base::FeatureList::IsEnabled(blink::features::kFingerprintingAudioContextJitter)) {
++    double jitter_factor = 1.0 + ((base::RandDouble() - 0.5) * 0.0001);
++    destination_handler->SetJitterFactor(jitter_factor);
++  }
++
+   Initialize();
+ }
+
+--- a/third_party/blink/renderer/platform/audio/audio_destination_handler.h
++++ b/third_party/blink/renderer/platform/audio/audio_destination_handler.h
+@@ -50,6 +50,8 @@ class PLATFORM_EXPORT AudioDestinationHandler {
+   virtual void StartRendering() = 0;
+   virtual void StopRendering() = 0;
+
++  void SetJitterFactor(double factor) { jitter_factor_ = factor; }
++
+  protected:
+   AudioDestinationHandler(AudioNode& node, float sample_rate);
+   ~AudioDestinationHandler();
+@@ -80,6 +82,8 @@ class PLATFORM_EXPORT AudioDestinationHandler {
+   unsigned number_of_input_channels_;
+   unsigned number_of_output_channels_;
+
++  double jitter_factor_ = 1.0;
++
+   base::WeakPtrFactory<AudioDestinationHandler> weak_factory_{this};
+ };
+
+--- a/third_party/blink/renderer/platform/audio/audio_destination_handler.cc
++++ b/third_party/blink/renderer/platform/audio/audio_destination_handler.cc
+@@ -150,6 +150,9 @@ void AudioDestinationHandler::Render(size_t frames_to_process,
+     }
+   }
+
++  if (jitter_factor_ != 1.0) {
++    destination->ScaleBy(jitter_factor_);
++  }
++
+   PostCrossThreadTask(
+       *main_thread_task_runner_, FROM_HERE,
+       CrossThreadBindOnce(&AudioDestinationHandler::NotifyComplete,

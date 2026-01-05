@@ -1,0 +1,38 @@
+--- a/chrome/browser/ui/views/renderer_context_menu/renderer_context_menu_views.cc
++++ b/chrome/browser/ui/views/renderer_context_menu/renderer_context_menu_views.cc
+@@ -1,3 +1,4 @@
++// Austere Browser: Clean context menu - remove unnecessary developer items
+ // Copyright 2012 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -200,6 +201,10 @@ void RendererContextMenuViews::AppendPlatformEditableItems() {
+ void RendererContextMenuViews::AppendPlatformItems() {
+   menu_model_->AddSeparator(ui::NORMAL_SEPARATOR);
++  // Austere: Removed developer tools items from default context menu
++  // Users can still access via Ctrl+Shift+I or menu
++  return;
+ }
+
+ void RendererContextMenuViews::AppendPlatformItemsForUrl(
+--- a/chrome/browser/renderer_context_menu/renderer_context_menu.cc
++++ b/chrome/browser/renderer_context_menu/renderer_context_menu.cc
+@@ -800,6 +800,10 @@ void RendererContextMenu::AppendDeveloperItems() {
+   if (!params_.is_editable && params_.media_type == ContextMenuDataMediaType::kNone &&
+       !params_.link_url.is_empty()) {
+     AppendDeveloperItemsForLink();
++    // Austere: Skip adding inspect element and view source from context menu
++    // These are still available via keyboard shortcuts and menu bar
++    return;
+   }
+
+   if (params_.page_url.is_valid() && !params_.is_editable) {
+@@ -850,6 +850,8 @@ void RendererContextMenu::AppendDeveloperItemsForLink() {
+   menu_model_->AddItemWithStringId(IDC_CONTENT_CONTEXT_INSPECTELEMENT,
+                                     IDS_CONTENT_CONTEXT_INSPECTELEMENT);
+   menu_model_->AddItemWithStringId(IDC_CONTENT_CONTEXT_VIEWPAGESOURCE,
+                                     IDS_CONTENT_CONTEXT_VIEWPAGESOURCE);
++  // Austere: Removed inspect element and view source from link context menu
++  return;
+ }
+
+ void RendererContextMenu::AppendDeveloperItemsForFrame() {

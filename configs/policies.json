@@ -76,7 +76,7 @@
   "ChromeCleanupReportingEnabled": false,
   "ClickToCallEnabled": false,
   "CloudExtensionRequestEnabled": false,
-  "ComponentUpdatesEnabled": false,
+  "ComponentUpdatesEnabled": true,
   "DefaultBrowserSettingEnabled": false,
   "DefaultWebHidGuardSetting": 2,
   "DefaultSerialGuardSetting": 2,

@@ -1,11 +1,13 @@
---enable-features=TabDiscarding,ProactiveTabFreezeAndDiscard,HighEfficiencyModeAvailable,TabFreezing,InfiniteTabFreezing,MemorySaverMode,ParallelDownloading
+--enable-features=TabDiscarding,ProactiveTabFreezeAndDiscard,HighEfficiencyModeAvailable,TabFreezing,InfiniteTabFreezing,MemorySaverMode,ParallelDownloading,TabHoverCards
+--fingerprinting-client-rects-noise
+--fingerprinting-canvas-measuretext-noise
+--fingerprinting-canvas-image-data-noise
 --disable-features=Prerender2,PrefetchBrowserInitiated,MediaRouter,BackgroundSync,BackgroundFetch,HistoryClusters,OptimizationHints,OptimizationGuideModelExecution,PrivacySandboxSettings4,PrivacySandboxAdTopics,PrivacySandboxFledge,PrivacySandboxAttributionReporting,InterestGroupStorage,Fledge,AdInterestGroupAPI,FencedFrames,BrowsingTopics,ConversionMeasurement,AttributionReportingCrossAppWeb,SharedStorageAPI,FederatedCredentialManagement,SafetyHub,ReadLater,SidePanelPinning,SidePanelCompanion,SignIn,Sync,TranslateUI,LiveCaption,ScreenAI,LensOverlay,Lens,Feed,DiscoverFeed
 --disable-background-networking
 --disable-background-timer-throttling
 --disable-backgrounding-occluded-windows
 --disable-breakpad
 --disable-client-side-phishing-detection
---disable-component-update
 --disable-default-apps
 --disable-domain-reliability
 --disable-extensions-file-access-check

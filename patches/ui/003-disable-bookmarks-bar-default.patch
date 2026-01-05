@@ -1,0 +1,12 @@
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -1,3 +1,4 @@
++// Austere Browser: Disable bookmarks bar by default
+ // Copyright 2012 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -1230,6 +1231,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+   registry->RegisterBooleanPref(prefs::kShowBookmarkBar, false);
++  // Austere: Bookmarks bar disabled by default for cleaner UI
+   registry->RegisterBooleanPref(prefs::kShowAppsShortcutInBookmarkBar, true);
+   registry->RegisterBooleanPref(prefs::kShowFullUrlsInAddressBar, false);
