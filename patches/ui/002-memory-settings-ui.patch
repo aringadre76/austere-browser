@@ -1,11 +1,6 @@
 --- a/chrome/browser/resources/settings/performance_page/performance_metrics_proxy.ts
 +++ b/chrome/browser/resources/settings/performance_page/performance_metrics_proxy.ts
-@@ -1,3 +1,4 @@
-+// Austere Browser: Extended memory aggressiveness options in settings
- // Copyright 2022 The Chromium Authors
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
-@@ -19,9 +20,13 @@ export enum MemorySaverModeState {
+@@ -19,9 +19,13 @@ export enum MemorySaverModeState {
  export enum MemorySaverModeAggressiveness {
    CONSERVATIVE = 0,
    MEDIUM = 1,
@@ -14,20 +9,15 @@
 +  // Austere Browser: Additional levels
 +  NONE = 3,
 +  SUPER_AGGRESSIVE = 4,
- 
+
    // Must be last.
 -  COUNT = 3,
 +  COUNT = 5,
  }
- 
+
 --- a/chrome/browser/resources/settings/performance_page/memory_page.html
 +++ b/chrome/browser/resources/settings/performance_page/memory_page.html
-@@ -1,3 +1,4 @@
-+<!-- Austere Browser: Memory management profile selection UI -->
- <style include="cr-shared-style settings-shared">
-   .memory-saver-radio-group {
-     padding-block-end: var(--cr-section-vertical-padding);
-@@ -22,6 +23,16 @@
+@@ -22,6 +22,16 @@
          group-aria-label="$i18n{memorySaverModeRadioGroupAriaLabel}">
 +        <controlled-radio-button id="noneButton"
 +          label="$i18n{memorySaverModeNoneLabel}"
@@ -40,7 +30,7 @@
          <controlled-radio-button id="conservativeButton"
            label="$i18n{memorySaverModeConservativeLabel}"
            name$="[[memorySaverModeAggressivenessEnum_.CONSERVATIVE]]" pref="[[
-@@ -43,6 +54,16 @@
+@@ -43,6 +53,16 @@
              $i18n{memorySaverModeAggressiveDescription}
            </div>
          </controlled-radio-button>
@@ -55,19 +45,18 @@
        </settings-radio-group>
      </div>
    </cr-collapse>
---- a/chrome/browser/resources/settings/performance_page/memory_page.ts
-+++ b/chrome/browser/resources/settings/performance_page/memory_page.ts
-@@ -1,3 +1,4 @@
-+// Austere Browser: Memory management settings page
- // Copyright 2024 The Chromium Authors
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
 --- a/chrome/app/settings_strings.grdp
 +++ b/chrome/app/settings_strings.grdp
-@@ -1050,6 +1050,14 @@
-       <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_AGGRESSIVE_DESCRIPTION" desc="Description for the aggressive memory saver aggressiveness option">
-         Discard tabs after 2 hours of inactivity
-       </message>
+@@ -1068,6 +1068,14 @@
+      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_CONSERVATIVE_DESCRIPTION" desc="Description for the conservative memory saver aggressiveness option">
+        Discard tabs after 1 hour of inactivity
+      </message>
+      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_MEDIUM_DESCRIPTION" desc="Description for the medium memory saver aggressiveness option">
+        Discard tabs after 5 minutes of inactivity
+      </message>
+      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_AGGRESSIVE_DESCRIPTION" desc="Description for the aggressive memory saver aggressiveness option">
+        Discard tabs after 2 minutes of inactivity
+      </message>
 +      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_NONE_LABEL" desc="Label for the none (disabled) memory saver aggressiveness option">
 +        None
 +      </message>
@@ -78,19 +67,14 @@
 +        Super Aggressive
 +      </message>
 +      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_SUPER_AGGRESSIVE_DESCRIPTION" desc="Description for the super aggressive memory saver aggressiveness option">
-+        Discard tabs after 15 seconds of inactivity. Maximum memory savings.
++        Discard tabs after 30 seconds of inactivity. Maximum memory savings.
 +      </message>
        <message name="IDS_SETTINGS_PERFORMANCE_BATTERY_PAGE_TITLE" desc="Title for the battery page">
          Battery
        </message>
 --- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
 +++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
-@@ -1,3 +1,4 @@
-+// Austere Browser: Memory management settings strings
- // Copyright 2014 The Chromium Authors
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
-@@ -1038,6 +1039,10 @@ void AddPerformanceStrings(content::Web
+@@ -1044,6 +1044,10 @@ void AddPerformanceStrings(content::Web
        {"memorySaverModeAggressiveDescription",
         IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_AGGRESSIVE_DESCRIPTION},
 +      {"memorySaverModeNoneLabel",
@@ -104,4 +88,3 @@
        {"batteryPageTitle", IDS_SETTINGS_PERFORMANCE_BATTERY_PAGE_TITLE},
        {"batterySaverModeLabel",
         IDS_SETTINGS_PERFORMANCE_BATTERY_SAVER_MODE_SETTING},
-

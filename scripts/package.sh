@@ -50,6 +50,12 @@ copy_browser_files() {
     fi
 
     cp -r "${OUTPUT_DIR}"/* "${dest}/"
+
+    print_status "Copying configuration files..."
+    local configs_dir="${PROJECT_ROOT}/configs"
+    if [ -f "${configs_dir}/policies.json" ]; then
+        cp "${configs_dir}/policies.json" "${PACKAGE_DIR}/${PACKAGE_NAME}/policies.json"
+    fi
 }
 
 create_launcher() {
@@ -178,9 +184,31 @@ cp "${SCRIPT_DIR}/share/applications/austere-browser.desktop" "${DESKTOP_DIR}/"
 chmod +x "${SHARE_DIR}/austere-browser"
 chmod 4755 "${SHARE_DIR}/chrome_sandbox" 2>/dev/null || chmod +x "${SHARE_DIR}/chrome_sandbox"
 
+echo "Installing browser policies..."
+POLICIES_SOURCE="${SCRIPT_DIR}/share/austere-browser/../policies.json"
+if [ ! -f "$POLICIES_SOURCE" ]; then
+    POLICIES_SOURCE="${SCRIPT_DIR}/policies.json"
+fi
+if [ -f "$POLICIES_SOURCE" ]; then
+    if [ "$EUID" -eq 0 ] && [ "$INSTALL_PREFIX" = "/usr/local" ]; then
+        SYSTEM_POLICIES_DIR="/etc/austere-browser/policies/managed"
+        install -d "$SYSTEM_POLICIES_DIR"
+        cp "$POLICIES_SOURCE" "${SYSTEM_POLICIES_DIR}/policy.json"
+        echo "Policies installed system-wide to ${SYSTEM_POLICIES_DIR}/policy.json"
+    else
+        USER_POLICIES_DIR="${HOME}/.config/austere-browser/policies/managed"
+        install -d "$USER_POLICIES_DIR"
+        cp "$POLICIES_SOURCE" "${USER_POLICIES_DIR}/policy.json"
+        echo "Policies installed to ${USER_POLICIES_DIR}/policy.json"
+    fi
+else
+    echo "Warning: policies.json not found, skipping policy installation"
+fi
+
 echo "Installation complete!"
 echo "You can now run: austere-browser"
 echo "Or find it in your application menu as 'Austere Browser'"
+echo "uBlock Origin will be automatically installed on first launch"
 INSTALL
 
     chmod +x "${dest}/install.sh"

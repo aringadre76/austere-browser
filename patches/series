@@ -11,5 +11,9 @@ privacy/001-enhanced-privacy.patch
 core/009-strip-bloat.patch
 core/010-strip-ui.patch
 core/011-strip-services.patch
+core/015-reduce-accept-language-headers.patch
+core/016-add-low-power-framerate-flag.patch
+core/017-reduce-system-info.patch
 ui/001-tab-memory-tooltip.patch
 ui/002-memory-settings-ui.patch
+branding/001-product-name.patch

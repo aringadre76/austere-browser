@@ -65,10 +65,10 @@ The following components are completely removed at build time:
 ### Memory Optimization
 
 - **Customizable Memory Management Levels** (user-configurable in settings):
-  - **Super Aggressive** (default): 15-second tab discard threshold - Maximum memory savings
-  - **Aggressive**: 30-second threshold - High memory savings
-  - **Medium**: 45-second threshold - Moderate memory savings
-  - **Light**: 2-hour threshold - Minimal memory savings
+  - **Super Aggressive** (default): 30-second tab discard threshold - Maximum memory savings
+  - **Aggressive**: 2-minute threshold - High memory savings
+  - **Medium**: 5-minute threshold - Moderate memory savings
+  - **Light**: 1-hour threshold - Minimal memory savings
   - **None**: Disabled - No automatic memory management
 - Infinite tab freezing (frozen tabs stay frozen)
 - Memory Saver Mode enabled by default (Super Aggressive)

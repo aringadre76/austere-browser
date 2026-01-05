@@ -1,0 +1,33 @@
+--- a/chrome/browser/performance_manager/user_tuning/battery_saver_mode_manager.cc
++++ b/chrome/browser/performance_manager/user_tuning/battery_saver_mode_manager.cc
+@@ -1,3 +1,5 @@
++// Austere Browser: Apply framerate throttling when energy saver is enabled
++// Reduces CPU/GPU usage and memory pressure by limiting frame rate
+ // Copyright 2022 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -20,6 +22,7 @@
+ #include "base/command_line.h"
+ #include "base/feature_list.h"
+ #include "base/logging.h"
++#include "base/strings/string_number_conversions.h"
+ #include "base/time/time.h"
+ #include "chrome/browser/performance_manager/user_tuning/prefs.h"
+ #include "components/performance_manager/public/features.h"
+@@ -50,6 +53,20 @@ void BatterySaverModeManager::OnBatterySaverModeChanged(bool enabled) {
+   if (enabled) {
+     // Austere: Apply framerate throttling when energy saver is enabled
+     content::StartThrottlingAllFrameSinks(base::Hertz(30));
++
++    // Check for custom framerate limit from command line flag
++    auto* command_line = base::CommandLine::ForCurrentProcess();
++    if (command_line->HasSwitch("energy-saver-fps-limit")) {
++      std::string fps_str = command_line->GetSwitchValueASCII("energy-saver-fps-limit");
++      int fps_limit = 30;
++      if (base::StringToInt(fps_str, &fps_limit) && fps_limit > 0 && fps_limit <= 120) {
++        content::StartThrottlingAllFrameSinks(base::Hertz(fps_limit));
++      }
++    }
+   } else {
+     content::StopThrottlingAllFrameSinks();
+   }

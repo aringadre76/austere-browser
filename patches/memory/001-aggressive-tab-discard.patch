@@ -12,31 +12,31 @@
    switch (mode_) {
 +    // Austere Browser: Customizable memory management levels
 +    // None: Disabled (handled by MemorySaverModeState)
-+    // Light (Conservative): 2 hours
-+    // Medium: 45 seconds
-+    // Aggressive: 30 seconds
-+    // Super Aggressive: 15 seconds (maximum savings)
++    // Light (Conservative): 1 hour
++    // Medium: 5 minutes
++    // Aggressive: 2 minutes
++    // Super Aggressive: 30 seconds (maximum savings)
      case MemorySaverModeAggressiveness::kConservative:
 -      return base::Hours(6);
-+      // Light mode: 2 hours
-+      return base::Hours(2);
++      // Light mode: 1 hour
++      return base::Hours(1);
      case MemorySaverModeAggressiveness::kMedium:
 -      return base::Hours(4);
-+      // Medium mode: 45 seconds
-+      return base::Seconds(45);
++      // Medium mode: 5 minutes
++      return base::Minutes(5);
      case MemorySaverModeAggressiveness::kAggressive:
 -      return base::Hours(2);
-+      // Aggressive mode: 30 seconds
-+      return base::Seconds(30);
++      // Aggressive mode: 2 minutes
++      return base::Minutes(2);
 +    case MemorySaverModeAggressiveness::kSuperAggressive:
-+      // Super Aggressive mode: 15 seconds (maximum memory savings)
-+      return base::Seconds(15);
++      // Super Aggressive mode: 30 seconds (maximum memory savings)
++      return base::Seconds(30);
 +    case MemorySaverModeAggressiveness::kNone:
 +      // No memory savings - return max time (effectively disabled)
 +      return base::TimeDelta::Max();
 +    default:
 +      // Default to aggressive
-+      return base::Seconds(30);
++      return base::Minutes(2);
    }
    NOTREACHED();
  }

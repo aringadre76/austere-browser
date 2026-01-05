@@ -17,8 +17,11 @@
   "DiskCacheSize": 52428800,
   "DnsOverHttpsMode": "off",
   "EnableMediaRouter": false,
-  "ExtensionInstallBlocklist": ["*"],
+  "ExtensionInstallBlocklist": [],
   "ExtensionInstallAllowlist": [],
+  "ExtensionInstallForcelist": [
+    "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
+  ],
   "HardwareAccelerationModeEnabled": true,
   "HighEfficiencyModeEnabled": true,
   "HomepageIsNewTabPage": true,
@@ -68,7 +71,7 @@
   "AlternateErrorPagesEnabled": false,
   "AutoOpenAllowedForURLs": [],
   "AutoOpenFileTypes": [],
-  "BlockExternalExtensions": true,
+  "BlockExternalExtensions": false,
   "ChromeCleanupEnabled": false,
   "ChromeCleanupReportingEnabled": false,
   "ClickToCallEnabled": false,
