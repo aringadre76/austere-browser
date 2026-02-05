@@ -7,9 +7,15 @@ memory/006-memory-saving-by-default.patch
 memory/007-parallel-downloading.patch
 memory/008-max-connections-per-host.patch
 memory/014-memory-aggressiveness-enum.patch
+performance/001-helium-aggressive-memory.patch
+performance/002-helium-network-optimizations.patch
+performance/003-helium-process-limits.patch
+performance/004-helium-v8-limits.patch
 privacy/001-enhanced-privacy.patch
 privacy/002-fingerprinting-mitigations.patch
 privacy/003-audio-context-fingerprinting.patch
+privacy/002-force-privacy-dns.patch
+privacy/003-force-dns-resolver.patch
 core/009-strip-bloat.patch
 core/010-strip-ui.patch
 core/011-strip-services.patch
@@ -24,4 +30,7 @@ ui/004-enable-tab-hover-cards.patch
 ui/005-enable-tab-search-toolbar-button.patch
 ui/006-mru-tab-cycling.patch
 ui/007-clean-context-menu.patch
+ui/008-austere-browser-frame.patch
+ui/009-austere-tab-design.patch
+ui/010-austere-color-system.patch
 branding/001-product-name.patch

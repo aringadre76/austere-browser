@@ -1,0 +1,37 @@
+--- a/chrome/browser/ui/color/chrome_color_mixer.cc
++++ b/chrome/browser/ui/color/chrome_color_mixer.cc
+@@ -75,6 +75,32 @@ void AddChromeColorMixers(ui::ColorProvider* provider,
+   // Add content area colors.
+   AddContentAreaColorMixer(provider, custom_theme);
+   
++  // Austere Browser color system
++  AddAustereColorMixer(provider);
++
+   // Add web UI color mixers if needed.
+   if (IsWebUiNativeTheme(native_theme))
+     AddWebUIColorMixers(provider);
+ }
++
++void AddAustereColorMixer(ui::ColorProvider* provider) {
++  // Austere Browser Minimalism Design System
++  ui::ColorMixer& mixer = provider->AddMixer();
++  
++  // Core background colors
++  mixer[kColorFrameActive] = SkColorSetRGB(10, 10, 11);
++  mixer[kColorFrameInactive] = SkColorSetRGB(15, 15, 16);
++  mixer[kColorBackground] = SkColorSetRGB(10, 10, 11);
++  mixer[kColorSurface] = SkColorSetRGB(20, 20, 22);
++  mixer[kColorSurfaceVariant] = SkColorSetRGB(26, 26, 28);
++  
++  // Text colors
++  mixer[kColorTextPrimary] = SkColorSetRGB(255, 255, 255);
++  mixer[kColorTextSecondary] = SkColorSetRGB(160, 160, 165);
++  mixer[kColorTextTertiary] = SkColorSetRGB(96, 96, 101);
++  
++  // Accent colors
++  mixer[kColorAccent] = SkColorSetRGB(0, 102, 204);
++  mixer[kColorAccentLight] = SkColorSetRGB(0, 82, 163);
++  mixer[kColorPositive] = SkColorSetRGB(0, 200, 150);
++  mixer[kColorWarning] = SkColorSetRGB(255, 176, 0);
++  mixer[kColorNegative] = SkColorSetRGB(255, 59, 48);
++}

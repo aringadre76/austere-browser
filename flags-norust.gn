@@ -1,0 +1,68 @@
+# Build flags without Rust dependencies
+is_official_build=true
+is_debug=false
+symbol_level=0
+is_component_build=false
+is_clang=true
+use_lld=true
+use_thin_lto=true
+chrome_pgo_phase=0
+treat_warnings_as_errors=false
+clang_use_chrome_plugins=false
+exclude_unwind_tables=true
+use_unofficial_version_number=true
+
+use_sysroot=false
+use_system_libffi=true
+
+# Privacy/security
+safe_browsing_mode=0
+enable_reporting=false
+disable_fieldtrial_testing_config=true
+google_api_key=""
+google_default_client_id=""
+google_default_client_secret=""
+use_official_google_api_keys=false
+
+# Force privacy DNS
+default_dns_server="1.1.1.1,1.0.0.1"
+force_dns_over_https=true
+
+# Performance features
+proprietary_codecs=true
+ffmpeg_branding="Chrome"
+use_vaapi=true
+use_pulseaudio=true
+use_alsa=true
+
+# Exclude problematic components
+exclude_unwind_tables=true
+remove_webcore_debug_symbols=true
+enable_skia_renderer=false
+enable_precompiled_headers=false
+
+# Platform support
+use_ozone=true
+ozone_platform_wayland=true
+ozone_platform_x11=true
+ozone_platform="x11"
+
+# Disable problematic features that require Rust
+enable_pdf=false
+enable_printing=true
+enable_plugins=false
+enable_vr=false
+enable_widevine=false
+enable_background_mode=false
+enable_media_router=false
+enable_webrtc=true
+
+# Rust specific disables
+enable_rust=false
+use_rust_toolchain=false
+enable_rust_bindgen=false
+rustc_version=""
+
+# Skia dependencies - disable skia entirely
+enable_skia_null_gpu=true
+use_skia=false

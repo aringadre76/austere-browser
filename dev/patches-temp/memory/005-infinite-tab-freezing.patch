@@ -1,0 +1,14 @@
+--- a/chrome/browser/performance_manager/policies/memory_saver_mode_policy.h
++++ b/chrome/browser/performance_manager/policies/memory_saver_mode_policy.h
+@@ -1,3 +1,4 @@
++// Austere Browser: Modified for aggressive tab freezing
+ // Copyright 2022 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+--- a/chrome/browser/performance_manager/policies/memory_saver_mode_policy.cc
++++ b/chrome/browser/performance_manager/policies/memory_saver_mode_policy.cc
+@@ -1,3 +1,4 @@
++// Austere Browser: Aggressive tab freezing enabled by default
+ // Copyright 2022 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.

@@ -1,0 +1,79 @@
+--- a/chrome/app/chromium_strings.grd
++++ b/chrome/app/chromium_strings.grd
+@@ -925,7 +925,7 @@
+      <message name="IDS_PRODUCT_NAME" desc="The name of the browser. This is the name that is shown to users in various places, including the name of the executable file.">
+-        Chromium
++        Austere
+      </message>
+      <message name="IDS_SHORT_PRODUCT_NAME" desc="The short name of the browser. This is the name that is shown to users in various places, including the name of the executable file.">
+-        Chromium
++        Austere
+      </message>
+      <message name="IDS_PRODUCT_DESCRIPTION" desc="The browser description shown in the About dialog and in the installer.">
+-        Chromium
++        Austere
+      </message>
+@@ -928,6 +928,9 @@
+       <message name="IDS_BROWSER_WINDOW_TITLE" desc="The window title of the browser window. Format: [Page Title] - Chromium">
+         <ph name="TITLE">$1<ex>Example Page</ex></ph> - Chromium
+       </message>
++      <message name="IDS_BROWSER_WINDOW_TITLE_AUSTERE" desc="The window title of the browser window. Format: [Page Title] - Austere">
++        <ph name="TITLE">$1<ex>Example Page</ex></ph> - Austere
++      </message>
+       <message name="IDS_BROWSER_WINDOW_TITLE_TAB_EDITING" desc="The window title when editing a tab. Format: [Tab Name] - Chromium">
+         <ph name="TITLE">$1<ex>New Tab</ex></ph> - Chromium
+       </message>
+--- a/chrome/browser/ui/browser.cc
++++ b/chrome/browser/ui/browser.cc
+@@ -2000,7 +2000,7 @@ std::u16string Browser::GetWindowTitleFor
+     return l10n_util::GetStringFUTF16(IDS_BROWSER_WINDOW_TITLE_TAB_EDITING,
+                                       GetWindowTitleFromWebContents(contents));
+   }
+-  return l10n_util::GetStringFUTF16(IDS_BROWSER_WINDOW_TITLE,
++  return l10n_util::GetStringFUTF16(IDS_BROWSER_WINDOW_TITLE_AUSTERE,
+                                     GetWindowTitleFromWebContents(contents));
+ }
+--- a/chrome/app/settings_strings.grdp
++++ b/chrome/app/settings_strings.grdp
+@@ -45,7 +45,7 @@
+   <message name="IDS_SETTINGS_ABOUT_PAGE_BROWSER_VERSION" desc="The text label describing the version of the browser, example: Version 57.0.2937.0-r123456 (Developer Build) unknown (64-bit). The suffix of the version (eg. '-r123456') exists only in limited cases.)">
+-    Version <ph name="PRODUCT_VERSION">$1<ex>15.0.865.0</ex></ph><ph name="PRODUCT_VERSION_SUFFIX">$2<ex>-r123456</ex></ph>  (<ph name="PRODUCT_CHANNEL">$3<ex>Developer Build</ex></ph>) <ph name="PRODUCT_MODIFIER">$4</ph> <ph name="PRODUCT_VERSION_BITS">$5</ph>
++    Austere <ph name="PRODUCT_VERSION">$1<ex>15.0.865.0</ex></ph><ph name="PRODUCT_VERSION_SUFFIX">$2<ex>-r123456</ex></ph>  (<ph name="PRODUCT_CHANNEL">$3<ex>Developer Build</ex></ph>) <ph name="PRODUCT_MODIFIER">$4</ph> <ph name="PRODUCT_VERSION_BITS">$5</ph> (based on Chromium)
+   </message>
+   <message name="IDS_SETTINGS_ABOUT_PROGRAM" desc="The text label for the About section in Settings, which shows information about the browser.">
+-    About Chromium
++    About Austere
+   </message>
+--- a/components/webui/version/resources/about_version.html
++++ b/components/webui/version/resources/about_version.html
+@@ -50,6 +50,9 @@ about:version template page
+       <table id="inner" cellpadding="0" cellspacing="0" border="0">
+         <tr><td class="label">$i18n{application_label}</td>
+           <td class="version" id="version">
++            <div style="font-weight: bold; margin-bottom: 8px;">Austere</div>
+             <span id="copy-content">
+               <span>$i18n{version}$i18n{version_suffix}</span>
+               (<span>$i18n{official}</span>)
+@@ -60,6 +63,9 @@ about:version template page
+               <div id="copy-to-clipboard-icon"></div>
+             </button>
+           </td>
+         </tr>
++        <tr><td class="label">Based on</td>
++          <td class="version">Chromium $i18n{version}</td>
++        </tr>
+       </table>
+     </div>
+   </body>
+ </html>
+--- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
++++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
+@@ -1044,6 +1044,10 @@ void AddPerformanceStrings(content::Web
+       {"memorySaverModeSuperAggressiveDescription",
+        IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_SUPER_AGGRESSIVE_DESCRIPTION},
++      // Austere branding
++      {"productName", u"Austere"},
++      {"shortProductName", u"Austere"},
+       {"batteryPageTitle", IDS_SETTINGS_PERFORMANCE_BATTERY_PAGE_TITLE},
+       {"batterySaverModeLabel",
+        IDS_SETTINGS_PERFORMANCE_SAVER_MODE_SETTING},

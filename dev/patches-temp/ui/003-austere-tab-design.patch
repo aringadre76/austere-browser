@@ -1,0 +1,106 @@
+--- a/chrome/browser/ui/views/tabs/tab.cc
++++ b/chrome/browser/ui/views/tabs/tab.cc
+@@ -50,6 +50,20 @@
+ #include "chrome/browser/ui/views/tabs/tab_close_button.h"
+ #include "chrome/browser/ui/views/tabs/tab_hover_card_bubble_view.h"
+ #include "chrome/browser/ui/views/tabs/tab_slot_controller.h"
++#include "chrome/browser/ui/performance_controls/tab_resource_usage_tab_helper.h"
++#include "base/byte_count.h"
++#include "ui/base/text/bytes_formatting.h"
++// Austere Browser custom tab styling
++#include "ui/gfx/canvas.h"
++#include "ui/gfx/geometry/skia_conversions.h"
++
++const SkColor kAustereTabActiveColor = SkColorSetRGB(26, 26, 28);
++const SkColor kAustereTabInactiveColor = SkColorSetRGB(20, 20, 22);
++const SkColor kAustereTabHoverColor = SkColorSetRGB(31, 31, 33);
++const SkColor kAustereTabTextColor = SkColorSetRGB(255, 255, 255);
++const SkColor kAustereTabTextSecondaryColor = SkColorSetRGB(160, 160, 165);
++const int kAustereTabCornerRadius = 8;
++const int kAustereTabSpacing = 2;
+ #include "chrome/common/chrome_features.h"
+ #include "chrome/grit/generated_resources.h"
+ #include "components/grit/components_scaled_resources.h"
+@@ -200,6 +214,12 @@ Tab::Tab(TabSlotController* controller)
+       hover_controller_(this),
+       animation_container_(std::make_unique<views::AnimationContainer>()),
+       icon_animation_(std::make_unique<gfx::SlideAnimation>(this)) {
++  
++  // Apply Austere Browser custom styling
++  SetBorder(views::CreateEmptyBorder(gfx::Insets::TLBR(4, kAustereTabSpacing, 0, kAustereTabSpacing)));
++  SetBackground(views::CreateRoundedRectBackground(
++      kAustereTabInactiveColor, gfx::RoundedCornersF(kAustereTabCornerRadius, kAustereTabCornerRadius, 0, 0)));
++
+   // Set up context menu controller.
+   controller_ = std::make_unique<TabContextMenuController>(this);
+ 
+@@ -767,9 +787,65 @@ std::u16string Tab::GetRenderedTooltipText(const gfx::Point& p) const {
+ std::u16string Tab::GetRenderedTooltipText(const gfx::Point& p) const {
+-  if (base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("tab-hover-cards") == "tooltip")
+-    return GetTooltipText(data_.title, GetAlertStateToShow(data_.alert_state));
+-  // Tab hover cards replace tooltips for tabs.
+-  return std::u16string();
++  std::u16string tooltip = data_.title;
++
++  if (data_.tab_resource_usage &&
++      data_.tab_resource_usage->memory_usage().is_positive()) {
++    const base::ByteCount memory_used =
++        data_.tab_resource_usage->memory_usage();
++    const bool is_high_memory_usage =
++        data_.tab_resource_usage->is_high_memory_usage();
++
++    if (!tooltip.empty()) {
++      tooltip.append(1, '\n');
++    }
++
++    const int message_id = is_high_memory_usage ? IDS_TAB_AX_HIGH_MEMORY_USAGE
++                                                : IDS_TAB_AX_MEMORY_USAGE;
++    tooltip.append(l10n_util::GetStringFUTF16(message_id, data_.title,
++                                             ui::FormatBytes(memory_used)));
++  } else if (data_.should_show_discard_status &&
++             data_.discarded_memory_savings.is_positive()) {
++    if (!tooltip.empty()) {
++      tooltip.append(1, '\n');
++    }
++    tooltip.append(l10n_util::GetStringFUTF16(
++        IDS_TAB_AX_MEMORY_SAVINGS, data_.title,
++        ui::FormatBytes(data_.discarded_memory_savings)));
++  }
++
++  std::optional<tabs::TabAlert> alert_state = GetAlertStateToShow(data_.alert_state);
++  if (alert_state) {
++    if (!tooltip.empty()) {
++      tooltip.append(1, '\n');
++    }
++    tooltip.append(
++        tabs::TabAlertController::GetTabAlertStateText(alert_state.value()));
++  }
++
++  if (!tooltip.empty()) {
++    return tooltip;
++  }
++  // Tab hover cards replace tooltips for tabs.
++  return std::u16string();
++}
++
++void Tab::OnPaint(gfx::Canvas* canvas) {
++  views::View::OnPaint(canvas);
++  
++  // Apply custom painting for active/inactive states
++  SkColor bg_color = IsActive() ? kAustereTabActiveColor : kAustereTabInactiveColor;
++  if (IsMouseHovered()) {
++    bg_color = kAustereTabHoverColor;
++  }
++  
++  // Draw custom rounded background
++  cc::PaintFlags flags;
++  flags.setColor(bg_color);
++  flags.setStyle(cc::PaintFlags::kFill_Style);
++  flags.setAntiAlias(true);
++  
++  gfx::RectF bounds(GetLocalBounds());
++  canvas->DrawRoundRect(bounds, gfx::RoundedCornersF(kAustereTabCornerRadius, kAustereTabCornerRadius, 0, 0), flags);
++  
++  // Call parent for content painting
++  PaintChildren(canvas);
+ }

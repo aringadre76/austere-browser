@@ -18,8 +18,19 @@ print_error() {
     echo "ERROR: $1" >&2
 }
 
-if [ ! -d "$OUTPUT_DIR" ] || [ ! -f "$OUTPUT_DIR/austere-browser" ]; then
-    print_error "Browser not built. Please build first with: ./build/build.sh build"
+# Check for packaged version first, then fall back to output
+PACKAGE_DIR="${PROJECT_ROOT}/package"
+PACKAGE_NAME="austere-browser-${VERSION}-linux-x86_64"
+
+if [ -d "${PACKAGE_DIR}/${PACKAGE_NAME}" ]; then
+    print_status "Using packaged browser from ${PACKAGE_DIR}/${PACKAGE_NAME}"
+    SOURCE_DIR="${PACKAGE_DIR}/${PACKAGE_NAME}"
+elif [ -d "$OUTPUT_DIR" ] && [ -f "$OUTPUT_DIR/austere-browser" ]; then
+    print_status "Using output directory"
+    SOURCE_DIR="${OUTPUT_DIR}"
+else
+    print_error "Browser not built or packaged. Please build first with: ./build/build.sh build"
+    print_error "Or create package with: ./scripts/package.sh"
     exit 1
 fi
 
@@ -37,7 +48,19 @@ mkdir -p "${APP_DIR}/usr/share/applications"
 mkdir -p "${APP_DIR}/usr/share/icons/hicolor/256x256/apps"
 
 print_status "Copying browser files..."
-cp -r "${OUTPUT_DIR}"/* "${APP_DIR}/usr/share/austere-browser/"
+if [ -d "${PACKAGE_DIR}/${PACKAGE_NAME}" ]; then
+    # Use packaged version - copy everything
+    cp -r "${PACKAGE_DIR}/${PACKAGE_NAME}"/* "${APP_DIR}/usr/"
+    # Move binary to bin
+    if [ -f "${APP_DIR}/usr/bin/austere-browser" ]; then
+        : # Already in place
+    elif [ -f "${APP_DIR}/usr/share/austere-browser/austere-browser" ]; then
+        mkdir -p "${APP_DIR}/usr/bin"
+        cp "${APP_DIR}/usr/share/austere-browser/austere-browser" "${APP_DIR}/usr/bin/"
+    fi
+else
+    cp -r "${OUTPUT_DIR}"/* "${APP_DIR}/usr/share/austere-browser/"
+fi
 
 print_status "Creating AppRun launcher..."
 cat > "${APP_DIR}/AppRun" << 'APPRUN'
@@ -46,20 +69,34 @@ HERE="$(dirname "$(readlink -f "${0}")")"
 export PATH="${HERE}/usr/bin:${PATH}"
 export LD_LIBRARY_PATH="${HERE}/usr/share/austere-browser:${LD_LIBRARY_PATH}"
 
-LIB_DIR="${HERE}/usr/share/austere-browser"
-FLAGS_FILE="${LIB_DIR}/austere_flags.txt"
-
-flags=()
-if [ -f "$FLAGS_FILE" ]; then
-    while IFS= read -r line; do
-        line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-        if [ -n "$line" ] && ! echo "$line" | grep -q '^#'; then
-            flags+=("$line")
-        fi
-    done < "$FLAGS_FILE"
+# Try to find the binary
+if [ -f "${HERE}/usr/bin/austere-browser" ]; then
+    BINARY="${HERE}/usr/bin/austere-browser"
+elif [ -f "${HERE}/usr/share/austere-browser/austere-browser" ]; then
+    BINARY="${HERE}/usr/share/austere-browser/austere-browser"
+else
+    echo "Error: austere-browser binary not found" >&2
+    exit 1
 fi
 
-exec "${LIB_DIR}/austere-browser" "${flags[@]}" "$@"
+LIB_DIR="${HERE}/usr/share/austere-browser"
+FLAGS_FILE="${LIB_DIR}/configs/austere_flags.txt"
+
+# Use Python wrapper if it exists, otherwise run directly
+if [ -f "${HERE}/usr/bin/austere-browser" ] && head -1 "${BINARY}" | grep -q python; then
+    exec "${BINARY}" "$@"
+else
+    flags=()
+    if [ -f "$FLAGS_FILE" ]; then
+        while IFS= read -r line; do
+            line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+            if [ -n "$line" ] && ! echo "$line" | grep -q '^#'; then
+                flags+=("$line")
+            fi
+        done < "$FLAGS_FILE"
+    fi
+    exec "${BINARY}" "${flags[@]}" "$@"
+fi
 APPRUN
 chmod +x "${APP_DIR}/AppRun"
 
@@ -118,4 +155,3 @@ print_status "  chmod +x ${APPIMAGE_NAME}"
 print_status ""
 print_status "To run it:"
 print_status "  ./${APPIMAGE_NAME}"
-

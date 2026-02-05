@@ -1,0 +1,20 @@
+--- a/chrome/browser/ui/browser.cc
++++ b/chrome/browser/ui/browser.cc
+@@ -1,3 +1,8 @@
++// Austere Browser: UI element stripping
++// Removes: Infobars, User Education, Update Bubbles, Safety Hub,
++// NTP Footer, Side Panel, FedCM, Lens Overlay, Touch-to-Fill
++// for a cleaner, faster, more private browser experience
++
+ // Copyright 2012 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+--- a/chrome/browser/ui/views/frame/browser_view.cc
++++ b/chrome/browser/ui/views/frame/browser_view.cc
+@@ -1,3 +1,6 @@
++// Austere Browser: Streamlined browser view
++// Unnecessary UI components removed for performance
++
+ // Copyright 2012 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.

@@ -1,0 +1,25 @@
+--- a/chrome/browser/net/profile_network_context_service.cc
++++ b/chrome/browser/net/profile_network_context_service.cc
+@@ -504,6 +504,10 @@ ProfileNetworkContextService::CreateNetworkContextParams(
+   if (!dns_over_https_url_or_template.empty())
+     builder->SetDnsOverHttpsUrl(dns_over_https_url_or_template);
+ 
++  // Austere Browser: Force Cloudflare DoH for privacy
++  if (!params->dns_over_https_url_or_template)
++    builder->SetDnsOverHttpsUrl("https://1.1.1.1/dns-query");
++
+   // Verify SSL certificates for enterprise policy.
+   builder->SetTrustAnchorCas(provided_cert_verifier->GetAdditionalTrustAnchors());
+ 
+--- a/components/privacy_sandbox/privacy_sandbox_settings.cc
++++ b/components/privacy_sandbox/privacy_sandbox_settings.cc
+@@ -250,6 +250,10 @@ bool PrivacySandboxSettings::IsTopicsAllowed(
+     return false;
+   }
+   
++  // Austere Browser: Force privacy DNS
++  if (!host_resolver_rules.empty())
++    host_resolver_rules += ",";
++  host_resolver_rules += "MAP * 1.1.1.1";
+   return true;
+ }

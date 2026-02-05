@@ -1,0 +1,36 @@
+--- a/chrome/browser/memory/tab_manager.cc
++++ b/chrome/browser/memory/tab_manager.cc
+@@ -200,8 +200,12 @@ const base::TimeDelta TabManager::kDefaultFocusTimeCharge =
+ 
+ // Helium-inspired aggressive memory management
+ const base::TimeDelta TabManager::kDefaultMinimumProtectionTime =
+-    base::TimeDelta::FromSeconds(30);
++    base::TimeDelta::FromSeconds(10);
+ const base::TimeDelta TabManager::kDefaultBackgroundTabCloseInterval =
+-    base::TimeDelta::FromDays(1);
++    base::TimeDelta::FromHours(6);
++const base::TimeDelta TabManager::kHeliumTabDiscardInterval =
++    base::TimeDelta::FromSeconds(20);
++const int TabManager::kHeliumMaxTabs = 15;
+ 
+ TabManager::TabManager()
+     : focused_tab_content_version_(0),
+@@ -450,6 +454,18 @@ void TabManager::StartTimer() {
+   // posted to an already-running timer will just reschedule it.
+   base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+       FROM_HERE,
++      base::BindOnce(&TabManager::HeliumAggressiveDiscard,
++                     weak_ptr_factory_.GetWeakPtr()),
++      kHeliumTabDiscardInterval);
++}
++
++void TabManager::HeliumAggressiveDiscard() {
++  if (GetTabCount() > kHeliumMaxTabs) {
++    DiscardTab(WEB_CONTENTS_DISCARD_REASON_PROACTIVE);
++  }
++  
++  base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
++      FROM_HERE,
+       base::BindOnce(&TabManager::PurgeMemoryAndDiscardTabs,
+                      weak_ptr_factory_.GetWeakPtr()),
+       base::TimeDelta::FromSeconds(30));

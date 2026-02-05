@@ -1,0 +1,12 @@
+--- a/content/browser/renderer_host/render_process_host_impl.cc
++++ b/content/browser/renderer_host/render_process_host_impl.cc
+@@ -1414,7 +1414,8 @@ size_t RenderProcessHostImpl::GetPlatformMaxRendererProcessCount() {
+
+   // If the system limit is unavailable, use a fallback value instead.
+   if (limit == kUnknownPlatformProcessLimit) {
+-    static constexpr size_t kMaxRendererProcessCount = 82;
++    // Austere Browser: Reduce max renderer processes for memory savings
++    static constexpr size_t kMaxRendererProcessCount = 8;
+     limit = kMaxRendererProcessCount;
+   }
+   return limit;

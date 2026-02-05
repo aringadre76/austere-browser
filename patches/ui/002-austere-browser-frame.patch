@@ -1,0 +1,39 @@
+--- a/chrome/browser/ui/views/frame/browser_view.cc
++++ b/chrome/browser/ui/views/frame/browser_view.cc
+@@ -100,6 +100,15 @@
+ #include "ui/views/window/client_view.h"
+ #include "ui/views/window/frame_background.h"
+ 
++// Austere Browser custom chrome styling
++const SkColor kAustereFrameColor = SkColorSetRGB(10, 10, 11);
++const SkColor kAustereFrameInactiveColor = SkColorSetRGB(15, 15, 16);
++const int kAustereFrameBorderRadius = 8;
++const int kAustereFrameBorderWidth = 0;
++const SkColor kAustereFrameBorderColor = SK_ColorTRANSPARENT;
++const int kAustereFrameShadow = 4;
++const bool kAustereFrameRounded = true;
++
+ #if BUILDFLAG(IS_WIN)
+ #include "chrome/browser/ui/views/frame/browser_frame_view_win.h"
+ #include "chrome/browser/ui/views/frame/glass_browser_frame_view.h"
+@@ -350,6 +359,20 @@ void BrowserView::Init() {
+   CreateLocationBarBar();
+   CreateToolbar();
+   CreateFindBar();
++  
++  // Apply Austere Browser custom frame styling
++  if (GetWidget()) {
++    GetWidget()->GetRootView()->SetBackground(
++        views::CreateSolidBackground(kAustereFrameColor));
++  }
++  
++  // Apply custom frame border radius
++  if (auto* frame_view = GetBrowserFrameView()) {
++    if (kAustereFrameRounded) {
++      frame_view->SetCornerRadius(kAustereFrameBorderRadius);
++    }
++  }
++
+   // Create various child views.
+   CreateSidebarManager();
+   CreateInstantPreviewController();

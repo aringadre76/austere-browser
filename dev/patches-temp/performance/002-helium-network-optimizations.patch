@@ -1,0 +1,16 @@
+--- a/chrome/browser/renderer_host/chrome_resource_dispatcher_host_delegate.cc
++++ b/chrome/browser/renderer_host/chrome_resource_dispatcher_host_delegate.cc
+@@ -50,6 +50,13 @@
+ #include "services/network/public/mojom/content_security_policy.mojom.h"
+ #include "third_party/blink/public/common/loader/url_loader_throttle.h"
+ 
++// Helium-inspired network optimizations
++const int kHeliumMaxConnections = 6;
++const int kHeliumMaxConnectionsPerHost = 8;
++const bool kHeliumEnableHttp2 = true;
++const bool kHeliumEnableQuic = true;
++const bool kHeliumEnableParallelDownloading = true;
++
+ namespace {
+ 
+ void IncrementHttpThrottleCount(

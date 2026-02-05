@@ -1,0 +1,32 @@
+# Minimal development build flags - only essential ones
+is_debug=true
+symbol_level=1
+is_component_build=true
+is_clang=true
+use_lld=true
+use_thin_lto=false
+chrome_pgo_phase=0
+treat_warnings_as_errors=false
+clang_use_chrome_plugins=false
+
+# Performance features
+proprietary_codecs=true
+ffmpeg_branding="Chrome"
+use_vaapi=true
+use_pulseaudio=true
+use_alsa=true
+
+# Platform support
+use_ozone=true
+ozone_platform_wayland=true
+ozone_platform_x11=true
+ozone_platform="x11"
+
+# Privacy/security
+safe_browsing_mode=0
+enable_reporting=false
+disable_fieldtrial_testing_config=true
+google_api_key=""
+google_default_client_id=""
+google_default_client_secret=""
+use_official_google_api_keys=false

@@ -1,0 +1,90 @@
+--- a/chrome/browser/resources/settings/performance_page/performance_metrics_proxy.ts
++++ b/chrome/browser/resources/settings/performance_page/performance_metrics_proxy.ts
+@@ -19,9 +19,13 @@ export enum MemorySaverModeState {
+ export enum MemorySaverModeAggressiveness {
+   CONSERVATIVE = 0,
+   MEDIUM = 1,
+-  AGGRESSIVE = 2,
++  AGGRESSIVE = 2,
++  // Austere Browser: Additional levels
++  NONE = 3,
++  SUPER_AGGRESSIVE = 4,
+
+   // Must be last.
+-  COUNT = 3,
++  COUNT = 5,
+ }
+
+--- a/chrome/browser/resources/settings/performance_page/memory_page.html
++++ b/chrome/browser/resources/settings/performance_page/memory_page.html
+@@ -22,6 +22,16 @@
+         group-aria-label="$i18n{memorySaverModeRadioGroupAriaLabel}">
++        <controlled-radio-button id="noneButton"
++          label="$i18n{memorySaverModeNoneLabel}"
++          name$="[[memorySaverModeAggressivenessEnum_.NONE]]" pref="[[
++                prefs.performance_tuning.high_efficiency_mode.aggressiveness]]">
++          <div class="cr-secondary-text">
++            $i18n{memorySaverModeNoneDescription}
++          </div>
++        </controlled-radio-button>
+         <controlled-radio-button id="conservativeButton"
+           label="$i18n{memorySaverModeConservativeLabel}"
+           name$="[[memorySaverModeAggressivenessEnum_.CONSERVATIVE]]" pref="[[
+@@ -43,6 +53,16 @@
+             $i18n{memorySaverModeAggressiveDescription}
+           </div>
+         </controlled-radio-button>
++        <controlled-radio-button id="superAggressiveButton"
++          label="$i18n{memorySaverModeSuperAggressiveLabel}"
++          name$="[[memorySaverModeAggressivenessEnum_.SUPER_AGGRESSIVE]]" pref="[[
++                prefs.performance_tuning.high_efficiency_mode.aggressiveness]]">
++          <div class="cr-secondary-text">
++            $i18n{memorySaverModeSuperAggressiveDescription}
++          </div>
++        </controlled-radio-button>
+       </settings-radio-group>
+     </div>
+   </cr-collapse>
+--- a/chrome/app/settings_strings.grdp
++++ b/chrome/app/settings_strings.grdp
+@@ -1068,6 +1068,14 @@
+      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_CONSERVATIVE_DESCRIPTION" desc="Description for the conservative memory saver aggressiveness option">
+        Discard tabs after 1 hour of inactivity
+      </message>
+      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_MEDIUM_DESCRIPTION" desc="Description for the medium memory saver aggressiveness option">
+        Discard tabs after 5 minutes of inactivity
+      </message>
+      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_AGGRESSIVE_DESCRIPTION" desc="Description for the aggressive memory saver aggressiveness option">
+        Discard tabs after 2 minutes of inactivity
+      </message>
++      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_NONE_LABEL" desc="Label for the none (disabled) memory saver aggressiveness option">
++        None
++      </message>
++      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_NONE_DESCRIPTION" desc="Description for the none (disabled) memory saver aggressiveness option">
++        No automatic memory management. Tabs will not be automatically discarded.
++      </message>
++      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_SUPER_AGGRESSIVE_LABEL" desc="Label for the super aggressive memory saver aggressiveness option">
++        Super Aggressive
++      </message>
++      <message name="IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_SUPER_AGGRESSIVE_DESCRIPTION" desc="Description for the super aggressive memory saver aggressiveness option">
++        Discard tabs after 30 seconds of inactivity. Maximum memory savings.
++      </message>
+       <message name="IDS_SETTINGS_PERFORMANCE_BATTERY_PAGE_TITLE" desc="Title for the battery page">
+         Battery
+       </message>
+--- a/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
++++ b/chrome/browser/ui/webui/settings/settings_localized_strings_provider.cc
+@@ -1044,6 +1044,10 @@ void AddPerformanceStrings(content::Web
+       {"memorySaverModeAggressiveDescription",
+        IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_AGGRESSIVE_DESCRIPTION},
++      {"memorySaverModeNoneLabel",
++       IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_NONE_LABEL},
++      {"memorySaverModeNoneDescription",
++       IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_NONE_DESCRIPTION},
++      {"memorySaverModeSuperAggressiveLabel",
++       IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_SUPER_AGGRESSIVE_LABEL},
++      {"memorySaverModeSuperAggressiveDescription",
++       IDS_SETTINGS_PERFORMANCE_MEMORY_SAVER_MODE_SUPER_AGGRESSIVE_DESCRIPTION},
+       {"batteryPageTitle", IDS_SETTINGS_PERFORMANCE_BATTERY_PAGE_TITLE},
+       {"batterySaverModeLabel",
+        IDS_SETTINGS_PERFORMANCE_BATTERY_SAVER_MODE_SETTING},

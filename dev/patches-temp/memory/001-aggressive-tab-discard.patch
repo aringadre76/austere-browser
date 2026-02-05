@@ -1,0 +1,42 @@
+--- a/chrome/browser/performance_manager/policies/memory_saver_mode_policy.cc
++++ b/chrome/browser/performance_manager/policies/memory_saver_mode_policy.cc
+@@ -1,3 +1,5 @@
++// Austere Browser: Customizable memory management levels
++// Supports: None (disabled), Light, Medium, Aggressive, Super Aggressive
+ // Copyright 2022 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -203,11 +205,28 @@ void MemorySaverModePolicy::DiscardPageTimerCallback(
+ base::TimeDelta MemorySaverModePolicy::GetTimeBeforeDiscardForCurrentMode()
+     const {
+   switch (mode_) {
++    // Austere Browser: Customizable memory management levels
++    // None: Disabled (handled by MemorySaverModeState)
++    // Light (Conservative): 1 hour
++    // Medium: 5 minutes
++    // Aggressive: 2 minutes
++    // Super Aggressive: 30 seconds (maximum savings)
+     case MemorySaverModeAggressiveness::kConservative:
+-      return base::Hours(6);
++      // Light mode: 1 hour
++      return base::Hours(1);
+     case MemorySaverModeAggressiveness::kMedium:
+-      return base::Hours(4);
++      // Medium mode: 5 minutes
++      return base::Minutes(5);
+     case MemorySaverModeAggressiveness::kAggressive:
+-      return base::Hours(2);
++      // Aggressive mode: 2 minutes
++      return base::Minutes(2);
++    case MemorySaverModeAggressiveness::kSuperAggressive:
++      // Super Aggressive mode: 30 seconds (maximum memory savings)
++      return base::Seconds(30);
++    case MemorySaverModeAggressiveness::kNone:
++      // No memory savings - return max time (effectively disabled)
++      return base::TimeDelta::Max();
++    default:
++      // Default to aggressive
++      return base::Minutes(2);
+   }
+   NOTREACHED();
+ }

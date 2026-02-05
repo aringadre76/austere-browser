@@ -1,0 +1,37 @@
+/* Austere Browser Test CSS - Apply via Developer Tools */
+
+/* Test the new dark theme colors */
+html, body {
+  background-color: #0A0A0B !important;
+  color: #FFFFFF !important;
+}
+
+/* Test rounded tab design */
+.tab {
+  border-radius: 8px 8px 0 0 !important;
+  background: #141415 !important;
+  margin: 0 2px !important;
+}
+
+.tab.active {
+  background: #1A1A1C !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+/* Test memory indicator colors */
+.memory-indicator.low { color: #00C896 !important; }
+.memory-indicator.medium { color: #FFB000 !important; }
+.memory-indicator.high { color: #FF3B30 !important; }
+
+/* Test button styling */
+button {
+  background: #1A1A1C !important;
+  border: 1px solid #2A2A2D !important;
+  border-radius: 4px !important;
+  color: #FFFFFF !important;
+  padding: 8px 16px !important;
+}
+
+button:hover {
+  background: #252527 !important;
+}

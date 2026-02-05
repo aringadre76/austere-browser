@@ -1,0 +1,24 @@
+--- a/net/dns/public/dns_over_https_config.cc
++++ b/net/dns/public/dns_over_https_config.cc
+@@ -20,6 +20,9 @@ DnsOverHttpsConfig::DnsOverHttpsConfig(
+ 
+ DnsOverHttpsConfig::~DnsOverHttpsConfig() = default;
+ 
++// Austere Browser: Force privacy DNS
++static const char kAustereDnsServer[] = "https://1.1.1.1/dns-query";
++
+ absl::optional<DnsOverHttpsConfig> DnsOverHttpsConfig::FromString(
+     const std::string& doh_server,
+     const std::string& dns_over_tls_template) {
+@@ -27,6 +30,11 @@ absl::optional<DnsOverHttpsConfig> DnsOverHttpsConfig::FromString(
+     return absl::nullopt;
+   }
+   
++  // Austere: Force Cloudflare DNS
++  if (doh_server.empty() || doh_server == "auto") {
++    return FromString(kAustereDnsServer, dns_over_tls_template);
++  }
++
+   GURL doh_url(doh_server);
+   if (!doh_url.is_valid()) {
+     return absl::nullopt;

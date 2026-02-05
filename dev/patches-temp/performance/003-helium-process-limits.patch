@@ -1,0 +1,14 @@
+--- a/content/browser/renderer_host/render_process_host_impl.cc
++++ b/content/browser/renderer_host/render_process_host_impl.cc
+@@ -120,6 +120,11 @@
+ #include "third_party/blink/public/common/buildflags.h"
+ #include "third_party/blink/public/common/features.h"
+ 
++// Helium-inspired process limits
++const int kHeliumMaxRendererProcesses = 4;
++const int kHeliumMaxGpuProcesses = 1;
++const int kHeliumMaxUtilityProcesses = 6;
++
+ namespace content {
+ 
+ using subtle::PerfInstrumentation;

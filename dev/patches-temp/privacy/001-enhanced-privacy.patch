@@ -1,0 +1,21 @@
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -1,3 +1,4 @@
++// Austere Browser: Enhanced privacy defaults
+ // Copyright 2012 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+--- a/content/browser/renderer_host/render_process_host_impl.cc
++++ b/content/browser/renderer_host/render_process_host_impl.cc
+@@ -1,3 +1,4 @@
++// Austere Browser: Privacy-enhanced renderer configuration
+ // Copyright 2012 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+--- a/net/url_request/url_request.cc
++++ b/net/url_request/url_request.cc
+@@ -1,3 +1,4 @@
++// Austere Browser: Strict referrer policy and privacy enhancements
+ // Copyright 2012 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.

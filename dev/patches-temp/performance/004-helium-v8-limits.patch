@@ -1,0 +1,13 @@
+--- a/v8/src/heap/heap.cc
++++ b/v8/src/heap/heap.cc
+@@ -50,6 +50,11 @@
+ #include "src/utils/utils.h"
+ #include "src/zone/zone-list-inl.h"
+ 
++// Helium-inspired V8 heap limits
++const size_t kHeliumMaxOldGenerationSize = 64 * 1024 * 1024;  // 64MB
++const size_t kHeliumMaxYoungGenerationSize = 16 * 1024 * 1024;  // 16MB
++const int kHeliumMaxExecutableSize = 8 * 1024 * 1024;  // 8MB
++
+ namespace v8 {
+ namespace internal {

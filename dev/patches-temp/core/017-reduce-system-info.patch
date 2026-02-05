@@ -1,0 +1,41 @@
+--- a/third_party/blink/common/features.cc
++++ b/third_party/blink/common/features.cc
+@@ -1,3 +1,5 @@
++// Austere Browser: Reduce system information exposure for privacy and memory efficiency
++// Minimizes data sent in HTTP headers and reduces memory overhead
+ // Copyright 2015 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -100,6 +102,6 @@ BASE_FEATURE(kReducedSystemInfo,
+             "ReducedSystemInfo",
+-            base::FEATURE_DISABLED_BY_DEFAULT);
++            base::FEATURE_ENABLED_BY_DEFAULT);
+
+--- a/third_party/blink/renderer/core/frame/navigator.cc
++++ b/third_party/blink/renderer/core/frame/navigator.cc
+@@ -1,3 +1,5 @@
++// Austere Browser: Reduce system information exposure
++// Minimizes navigator properties to reduce memory and privacy footprint
+ // Copyright 2014 The Chromium Authors
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+@@ -20,6 +22,7 @@
+ #include "third_party/blink/renderer/core/frame/navigator.h"
+ #include "third_party/blink/renderer/core/frame/navigator_device_memory.h"
+ #include "third_party/blink/renderer/core/frame/navigator_id.h"
++#include "third_party/blink/public/common/features.h"
+ #include "third_party/blink/renderer/platform/bindings/exception_state.h"
+ #include "third_party/blink/renderer/platform/bindings/script_state.h"
+
+@@ -100,6 +103,12 @@ String Navigator::platform() const {
+   if (RuntimeEnabledFeatures::ReducedSystemInfoEnabled()) {
+     return "Linux x86_64";
+   }
++
++  // Austere: Further reduce system info when feature is enabled
++  if (base::FeatureList::IsEnabled(blink::features::kReducedSystemInfo)) {
++    return "Linux x86_64";
++  }
++
+   return GetFrame()->GetSettings()->GetNavigatorPlatform();
+ }

@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Austere Browser Test",
+  "version": "1.0",
+  "description": "Test Austere Browser design system",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["austere-styles.css"],
+      "js": ["test-script.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["austere-styles.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

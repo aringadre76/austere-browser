@@ -1,0 +1,36 @@
+# Development build flags - optimized for speed
+is_debug=true
+symbol_level=1  # Minimal symbols for debugging
+is_component_build=true  # Faster incremental builds
+is_clang=true
+use_lld=true
+use_thin_lto=false  # Disable for faster builds
+chrome_pgo_phase=0
+treat_warnings_as_errors=false
+clang_use_chrome_plugins=false
+exclude_unwind_tables=false  # Keep for debugging
+
+# Enable more debugging features
+enable_logging=true
+enable_base_tracing=true
+dcheck_always_on=true
+
+# Keep performance optimizations
+proprietary_codecs=true
+ffmpeg_branding="Chrome"
+use_vaapi=true
+use_pulseaudio=true
+use_alsa=true
+
+# Platform support
+use_ozone=true
+ozone_platform_wayland=true
+ozone_platform_x11=true
+ozone_platform="x11"
+
+# Disabled services (keep for performance)
+enable_spellcheck=false
+enable_webrtc=true
+enable_background_mode=false
+enable_media_router=false
+enable_vr=false
